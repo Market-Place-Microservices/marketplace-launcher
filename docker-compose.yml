@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  nats-serve:
+    image: nats:latest
+    ports:
+      - 8222:8222
+
+  client-gateway:
+    build: ./client-gateway-ms
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:3000
+    volumes:
+      - ./client-gateway-ms/src:/usr/src/app/src
+    command: pnpm start:dev
+    environment:
+      - NATS_SERVERS=nats://nats-serve:4222
+      - PORT=3000
+
+  product-ms:
+    build: ./product-ms
+    ports:
+      - 3008:3000
+    volumes:
+      - ./product-ms/src:/usr/src/app/src
+    command: pnpm start:dev
+    environment:
+      - NATS_SERVERS=nats://nats-serve:4222
+      - PORT=3000
+      - DATABASE_URL=file:./dev.db
+
+
+  orders-ms:
+    depends_on:
+      - orders-database
+    build: ./orders-ms
+    volumes:
+      - ./orders-ms/src:/usr/src/app/src
+    command: pnpm start:dev
+    environment:
+      - PORT=3007
+      - DATABASE_URL=postgresql://postgres:superstrong@orders-database:5432/ordersdb
+      - NATS_SERVERS=NATS_SERVERS=nats://nats-serve:4222
+
+
+  orders-database:
+    container_name: orders-database-container
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    ports:
+      - 5439:5432
+    environment:
+      - POSTGRES_DB=ordersdb
+      - POSTGRES_PASSWORD=superstrong
+      - POSTGRES_USER=postgres
+volumes:
+  database_data:
