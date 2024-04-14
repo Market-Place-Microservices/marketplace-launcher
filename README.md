@@ -16,7 +16,8 @@
     * git push
 ```
 
-🔄 Initialize and update submodules.
+### 🔄 Initialize and update submodules.
+
 When someone clones the repository for the first time, they should execute the following command to initialize and update the submodules.
 
 ```
@@ -26,7 +27,7 @@ When someone clones the repository for the first time, they should execute the f
 🔃 To update submodule references.
 
 ```
-     git submodule update --remote
+    git submodule update --remote
 ```
 
 ## Important
