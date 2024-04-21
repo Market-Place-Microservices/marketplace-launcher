@@ -9,23 +9,21 @@ services:
   client-gateway:
     build: ./client-gateway-ms
     ports:
-      - ${CLIENT_GATEWAY_PORT}:3000
+      - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
     volumes:
       - ./client-gateway-ms/src:/usr/src/app/src
     command: pnpm start:dev
     environment:
-      - NATS_SERVERS=nats://nats-serve:4222
-      - PORT=3000
+      - NATS_SERVERS=${NATS_SERVERS}
+      - PORT=${CLIENT_GATEWAY_PORT}
 
   product-ms:
     build: ./product-ms
-    ports:
-      - 3008:3000
     volumes:
       - ./product-ms/src:/usr/src/app/src
     command: pnpm start:dev
     environment:
-      - NATS_SERVERS=nats://nats-serve:4222
+      - NATS_SERVERS=${NATS_SERVERS}
       - PORT=3000
       - DATABASE_URL=file:./dev.db
 
@@ -39,8 +37,8 @@ services:
     command: pnpm start:dev
     environment:
       - PORT=3007
-      - DATABASE_URL=postgresql://postgres:superstrong@orders-database:5432/ordersdb
-      - NATS_SERVERS=NATS_SERVERS=nats://nats-serve:4222
+      - DATABASE_URL=${ORDERS_DATABASE_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
 
 
   orders-database:
@@ -50,10 +48,11 @@ services:
     volumes:
       - database_data:/var/lib/postgresql/data
     ports:
-      - 5439:5432
+      - 5439:${ORDER_POSTGRES_PORT}
     environment:
-      - POSTGRES_DB=ordersdb
-      - POSTGRES_PASSWORD=superstrong
-      - POSTGRES_USER=postgres
+      - POSTGRES_DB=${ORDER_POSTGRES_DB}
+      - POSTGRES_PASSWORD=${ORDER_POSTGRES_PASSWORD}
+      - POSTGRES_USER=${ORDER_POSTGRES_USER}
+      - POSTGRES_PORT=${ORDER_POSTGRES_PORT}
 volumes:
   database_data:
