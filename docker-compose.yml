@@ -6,6 +6,17 @@ services:
     ports:
       - 8222:8222
 
+  auth-ms:
+    build: ./auth-ms
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    volumes:
+      - ./auth-ms/src:/usr/src/app/src
+    command: pnpm start:dev
+    environment:
+      - NATS_SERVERS=${NATS_SERVERS}
+      - PORT=${AUTH_PORT}
+
   client-gateway:
     build: ./client-gateway-ms
     ports:
