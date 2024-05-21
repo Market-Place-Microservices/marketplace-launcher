@@ -16,6 +16,7 @@ services:
     environment:
       - NATS_SERVERS=${NATS_SERVERS}
       - PORT=${AUTH_PORT}
+      - DATABASE_URL=${AUTH_DATABASE_URL}
 
   client-gateway:
     build: ./client-gateway-ms
