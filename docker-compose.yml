@@ -17,6 +17,7 @@ services:
       - NATS_SERVERS=${NATS_SERVERS}
       - PORT=${AUTH_PORT}
       - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET_AUTH}
 
   client-gateway:
     build: ./client-gateway-ms
